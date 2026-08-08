@@ -318,13 +318,22 @@ function tzAbbrev(){
 }
 
 // Día, hora y franja horaria del ESTUDIANTE, detectados automáticamente por su navegador
+// Formatea la hora local en 12h con AM/PM manualmente (no depende del
+// formato regional del navegador/SO, que a veces ignora hour12 de Intl).
+function formatLocalTime12(d){
+  let h = d.getHours();
+  const m = d.getMinutes();
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12; if(h === 0) h = 12;
+  return pad(h) + ":" + pad(m) + " " + ampm;
+}
+
 function localWhenString(startUTC, endUTC){
   const weekdayFmt = new Intl.DateTimeFormat("es", {weekday:"long"});
   let weekday = weekdayFmt.format(startUTC);
   weekday = weekday.charAt(0).toUpperCase()+weekday.slice(1);
-  const timeFmt = new Intl.DateTimeFormat([], {hour:"2-digit", minute:"2-digit", hour12:true});
-  const s = timeFmt.format(startUTC);
-  const e = timeFmt.format(endUTC);
+  const s = formatLocalTime12(startUTC);
+  const e = formatLocalTime12(endUTC);
   const tz = tzAbbrev();
   return weekday + " · " + s + " – " + e + (tz ? " (" + tz + ")" : "");
 }
