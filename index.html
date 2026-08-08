@@ -203,10 +203,10 @@ const RECURRING_CLASSES = [
 ];
 
 // Sesiones especiales puntuales (opcional). Agrega un objeto por cada una:
-// { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: ..." }
+// { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: ...", color: "#74f0d5" }
+// "color" es opcional (código hex); si no lo pones, usa el dorado por defecto.
 const SPECIAL_SESSIONS = [
-  // ejemplo:
-  // { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: Q&A en vivo" },
+  { date: "2026-08-20", hour: 19, minute: 30, title: "Sesion Q&A con teacher Isa", color: "#74f0d5" },
 ];
 
 /* ============================================================
@@ -225,12 +225,12 @@ function escapeICS(s){
   return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");
 }
 
-function buildEvent(y, m, day, hour, minute, title, isSpecial){
+function buildEvent(y, m, day, hour, minute, title, isSpecial, color){
   const startUTC = new Date(Date.UTC(y, m, day, hour + COLOMBIA_OFFSET_H, minute, 0));
   const endUTC = new Date(startUTC.getTime() + CLASS_DURATION_MIN * 60000);
   return {
     id: startUTC.getTime()+"-"+Math.random().toString(36).slice(2,8),
-    title, startUTC, endUTC, isSpecial: !!isSpecial,
+    title, startUTC, endUTC, isSpecial: !!isSpecial, color: color || null,
     description: "Clase de Immersa Academy. Únete aquí: " + ZOOM_LINK + " (ID de reunión: " + MEETING_ID + ")",
     location: ZOOM_LINK
   };
@@ -260,7 +260,7 @@ function getOccurrences(){
 
   SPECIAL_SESSIONS.forEach(s=>{
     const [y,m,d] = s.date.split("-").map(Number);
-    const ev = buildEvent(y, m-1, d, s.hour, s.minute, s.title, true);
+    const ev = buildEvent(y, m-1, d, s.hour, s.minute, s.title, true, s.color);
     if(ev.startUTC.getTime() > now - 5*60000) events.push(ev);
   });
 
@@ -352,7 +352,7 @@ function render(){
     window.downloadICS_registry[icsId] = ev;
 
     card.innerHTML = `
-      <div class="badge">
+      <div class="badge"${ev.color ? ` style="background:${ev.color}"` : ''}>
         <div class="num">${dayNum}</div>
         <div class="mon">${monAbbr}</div>
       </div>
