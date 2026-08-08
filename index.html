@@ -117,7 +117,7 @@
     font-size:0.9rem;
     padding:9px 16px;
     border-radius:8px;
-    margin-bottom:4px;
+    margin-bottom:12px;
   }
   .zoom-btn:hover{background:var(--teal-dark);}
   .meeting-id{
@@ -198,8 +198,8 @@ const COLOMBIA_OFFSET_H = 5;    // Colombia = UTC-5, sin horario de verano
 // Clases semanales recurrentes (se repiten para siempre).
 // weekday: 0=domingo, 1=lunes, 2=martes, 3=miércoles, 4=jueves, 5=viernes, 6=sábado
 const RECURRING_CLASSES = [
-  { weekday: 2, hour: 19, minute: 30, title: "Clarity Membership — Clase semanal" }, // Martes 7:30pm
-  { weekday: 3, hour: 6,  minute: 0,  title: "Clarity Membership — Clase semanal" }, // Miércoles 6:00am
+  { weekday: 2, hour: 19, minute: 30, title: "Pronunciation class" }, // Martes 7:30pm
+  { weekday: 3, hour: 6,  minute: 0,  title: "Pronunciation class" }, // Miércoles 6:00am
 ];
 
 // Sesiones especiales puntuales (opcional). Agrega un objeto por cada una:
@@ -361,7 +361,6 @@ function render(){
         <h3>${ev.title}</h3>
         <div class="when">${localWhenString(ev.startUTC, ev.endUTC)}</div>
         <a class="zoom-btn" href="${ZOOM_LINK}" target="_blank" rel="noopener">🔗 Unirse a Zoom</a>
-        <div class="meeting-id">ID de reunión: ${MEETING_ID}</div>
         <div class="add-cal">
           <span class="add-cal-label">Agregar a tu calendario:</span>
           <a href="${googleLink(ev)}" target="_blank" rel="noopener">Google Calendar</a>
