@@ -195,6 +195,11 @@ const CLASS_DURATION_MIN = 60;
 const WEEKS_AHEAD = 8;          // cuántas semanas de clases mostrar
 const COLOMBIA_OFFSET_H = 5;    // Colombia = UTC-5, sin horario de verano
 
+// Las clases recurrentes solo se muestran a partir de esta fecha (incluida),
+// hora Colombia, formato AAAA-MM-DD. Útil si vas a hacer una pausa o empezar
+// un horario nuevo más adelante. Deja "" (vacío) para no aplicar ningún límite.
+const SCHEDULE_START_DATE = "2026-08-19";
+
 // Clases semanales recurrentes (se repiten para siempre).
 // weekday: 0=domingo, 1=lunes, 2=martes, 3=miércoles, 4=jueves, 5=viernes, 6=sábado
 const RECURRING_CLASSES = [
@@ -247,9 +252,16 @@ function getOccurrences(){
   const startM = colombiaNow.getUTCMonth();
   const startD = colombiaNow.getUTCDate();
 
+  let scheduleStartRef = null;
+  if(SCHEDULE_START_DATE){
+    const [sy, sm, sd] = SCHEDULE_START_DATE.split("-").map(Number);
+    scheduleStartRef = Date.UTC(sy, sm - 1, sd);
+  }
+
   const daysAhead = WEEKS_AHEAD * 7 + 7;
   for(let i=0; i<daysAhead; i++){
     const dayRef = new Date(Date.UTC(startY, startM, startD + i));
+    if(scheduleStartRef !== null && dayRef.getTime() < scheduleStartRef) continue;
     const weekday = dayRef.getUTCDay();
     RECURRING_CLASSES.forEach(def=>{
       if(def.weekday === weekday){
