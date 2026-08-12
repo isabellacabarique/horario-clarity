@@ -105,6 +105,12 @@
     font-weight:600;
     margin-bottom:12px;
   }
+  .event-note{
+    color:var(--muted);
+    font-size:0.78rem;
+    line-height:1.4;
+    margin:-6px 0 12px;
+  }
   .zoom-btn{
     display:inline-flex;
     align-items:center;
@@ -208,10 +214,11 @@ const RECURRING_CLASSES = [
 ];
 
 // Sesiones especiales puntuales (opcional). Agrega un objeto por cada una:
-// { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: ...", color: "#74f0d5" }
-// "color" es opcional (código hex); si no lo pones, usa el dorado por defecto.
+// { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: ...", color: "#74f0d5", note: "Texto chiquito debajo del título (opcional)" }
+// "color" y "note" son opcionales.
 const SPECIAL_SESSIONS = [
-  { date: "2026-08-27", hour: 19, minute: 0, title: "Q&A con teacher Isa (sesión en español)", color: "#74f0d5" },
+  { date: "2026-08-27", hour: 19, minute: 0, title: "Q&A con teacher Isa (sesión en español)", color: "#74f0d5",
+    note: "Un espacio mensual para resolver preguntas, destrabar obstáculos y ayudarte a seguir avanzando." },
   // ejemplo:
   // { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: Q&A en vivo", color: "#74f0d5" },
 ];
@@ -232,12 +239,12 @@ function escapeICS(s){
   return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n");
 }
 
-function buildEvent(y, m, day, hour, minute, title, isSpecial, color){
+function buildEvent(y, m, day, hour, minute, title, isSpecial, color, note){
   const startUTC = new Date(Date.UTC(y, m, day, hour + COLOMBIA_OFFSET_H, minute, 0));
   const endUTC = new Date(startUTC.getTime() + CLASS_DURATION_MIN * 60000);
   return {
     id: startUTC.getTime()+"-"+Math.random().toString(36).slice(2,8),
-    title, startUTC, endUTC, isSpecial: !!isSpecial, color: color || null,
+    title, startUTC, endUTC, isSpecial: !!isSpecial, color: color || null, note: note || null,
     description: "Clase de Immersa Academy. Únete aquí: " + ZOOM_LINK + " (ID de reunión: " + MEETING_ID + ")",
     location: ZOOM_LINK
   };
@@ -274,7 +281,7 @@ function getOccurrences(){
 
   SPECIAL_SESSIONS.forEach(s=>{
     const [y,m,d] = s.date.split("-").map(Number);
-    const ev = buildEvent(y, m-1, d, s.hour, s.minute, s.title, true, s.color);
+    const ev = buildEvent(y, m-1, d, s.hour, s.minute, s.title, true, s.color, s.note);
     if(ev.startUTC.getTime() > now - 5*60000) events.push(ev);
   });
 
@@ -383,6 +390,7 @@ function render(){
         ${ev.isSpecial ? '<span class="tag-special">Sesión especial</span>' : ''}
         <h3>${ev.title}</h3>
         <div class="when">${localWhenString(ev.startUTC, ev.endUTC)}</div>
+        ${ev.note ? `<div class="event-note">${ev.note}</div>` : ''}
         <a class="zoom-btn" href="${ZOOM_LINK}" target="_blank" rel="noopener">🔗 Unirse a Zoom</a>
         <div class="add-cal">
           <span class="add-cal-label">Agregar a tu calendario:</span>
