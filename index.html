@@ -125,11 +125,6 @@
     margin-bottom:12px;
   }
   .zoom-btn:hover{background:var(--teal-dark);}
-  .meeting-id{
-    font-size:0.78rem;
-    color:var(--muted);
-    margin-bottom:12px;
-  }
   .add-cal{
     display:flex;
     flex-wrap:wrap;
@@ -210,6 +205,7 @@ const SCHEDULE_START_DATE = "2026-08-19";
 // weekday: 0=domingo, 1=lunes, 2=martes, 3=miércoles, 4=jueves, 5=viernes, 6=sábado
 const RECURRING_CLASSES = [
   { weekday: 2, hour: 19, minute: 0,  title: "Clase de práctica + feedback" }, // Martes 7:00pm
+  { weekday: 3, hour: 6,  minute: 0,  title: "Clase de práctica + feedback" }, // Miércoles 6:00am
 ];
 
 // Sesiones especiales puntuales (opcional). Agrega un objeto por cada una:
@@ -336,7 +332,6 @@ function tzAbbrev(){
   }catch(e){ return ""; }
 }
 
-// Día, hora y franja horaria del ESTUDIANTE, detectados automáticamente por su navegador
 // Formatea la hora local en 12h con AM/PM manualmente (no depende del
 // formato regional del navegador/SO, que a veces ignora hour12 de Intl).
 function formatLocalTime12(d){
