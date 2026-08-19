@@ -57,21 +57,6 @@
     margin-bottom:22px;
     line-height:1.45;
   }
-  .bulk-btn{
-    display:block;
-    width:100%;
-    font-family:inherit;
-    background:#fff;
-    color:var(--teal-dark);
-    border:1.5px solid var(--teal);
-    padding:12px 16px;
-    border-radius:10px;
-    font-size:0.9rem;
-    font-weight:600;
-    cursor:pointer;
-    margin-bottom:22px;
-  }
-  .bulk-btn:hover{background:var(--teal-light);}
   .card{
     background:#fff;
     border:1px solid #EEF1F3;
@@ -191,7 +176,6 @@
     La hora que ves en cada clase ya está ajustada a <strong>tu zona horaria</strong> (detectada por tu navegador).
   </div>
 
-  <button type="button" id="bulk-ics-btn" class="bulk-btn">📅 Agregar las clases de los próximos 30 días a tu calendario</button>
 
   <div id="list"></div>
   <div id="empty" style="display:none;">No hay clases próximas por ahora.</div>
@@ -343,49 +327,6 @@ function downloadICS(ev){
   setTimeout(()=>URL.revokeObjectURL(url), 2000);
 }
 window.downloadICS_registry = {};
-
-// Descarga un solo archivo .ics con todas las clases de los próximos N días
-// (útil para que el estudiante las agregue todas de una vez a su calendario).
-function downloadICSBundle(days){
-  const now = Date.now();
-  const windowEnd = now + days * 24 * 60 * 60 * 1000;
-  const events = getAllOccurrences().filter(ev => ev.startUTC.getTime() <= windowEnd);
-
-  if(events.length === 0){
-    alert("No hay clases programadas en los próximos " + days + " días.");
-    return;
-  }
-
-  const veventBlocks = events.map(ev => [
-    "BEGIN:VEVENT",
-    "UID:"+ev.id+"@immersa-academy",
-    "DTSTAMP:"+toICSDate(new Date()),
-    "DTSTART:"+toICSDate(ev.startUTC),
-    "DTEND:"+toICSDate(ev.endUTC),
-    "SUMMARY:"+escapeICS(ev.title),
-    "DESCRIPTION:"+escapeICS(ev.description),
-    "LOCATION:"+escapeICS(ev.location),
-    "END:VEVENT"
-  ].join("\r\n")).join("\r\n");
-
-  const ics = [
-    "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Immersa Academy//Horario de clases//ES","CALSCALE:GREGORIAN",
-    veventBlocks,
-    "END:VCALENDAR"
-  ].join("\r\n");
-
-  const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = "clases-proximos-30-dias.ics";
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url), 2000);
-}
-
-const bulkBtn = document.getElementById("bulk-ics-btn");
-if(bulkBtn){
-  bulkBtn.addEventListener("click", ()=> downloadICSBundle(30));
-}
 
 function tzAbbrev(){
   try{
