@@ -212,9 +212,7 @@ const RECURRING_CLASSES = [
 // { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: ...", color: "#74f0d5", note: "Texto chiquito debajo del título (opcional)" }
 // "color" y "note" son opcionales.
 const SPECIAL_SESSIONS = [
-  { date: "2026-08-27", hour: 19, minute: 0, title: "Q&A con teacher Isa (sesión en español)", color: "#74f0d5",
-    note: "Un espacio mensual para resolver preguntas, destrabar obstáculos y ayudarte a seguir avanzando." },
-  { date: "2026-09-24", hour: 19, minute: 0, title: "Sesión de claridad (Q&A con teacher Isa)", color: "#74f0d5",
+  { date: "2026-10-22", hour: 11, minute: 0, title: "Sesión de claridad (Q&A con teacher Isa)", color: "#74f0d5",
     note: "Un espacio mensual para resolver preguntas, destrabar obstáculos y ayudarte a seguir avanzando." },
   // ejemplo:
   // { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: Q&A en vivo", color: "#74f0d5" },
@@ -308,6 +306,16 @@ function outlookLink(ev){
   return "https://outlook.live.com/calendar/0/deeplink/compose?" + p.toString();
 }
 
+// iOS Safari no respeta el atributo "download" para blobs: en vez de abrir
+// la pantalla de "Agregar a Calendario" nativa, ofrece guardar en Archivos.
+// Para iOS usamos una data URI y navegamos directo, que sí dispara la
+// pantalla nativa de Calendario. En el resto (desktop, Android) seguimos
+// usando la descarga normal del archivo .ics.
+function isIOS(){
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
 function downloadICS(ev){
   const ics = [
     "BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Immersa Academy//Horario de clases//ES","CALSCALE:GREGORIAN",
@@ -321,6 +329,13 @@ function downloadICS(ev){
     "LOCATION:"+escapeICS(ev.location),
     "END:VEVENT","END:VCALENDAR"
   ].join("\r\n");
+
+  if(isIOS()){
+    const dataUri = "data:text/calendar;charset=utf-8," + encodeURIComponent(ics);
+    window.location.href = dataUri;
+    return;
+  }
+
   const blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
