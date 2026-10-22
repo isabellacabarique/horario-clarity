@@ -1,0 +1,36 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Immersa Academy//Clarity Membership//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Clarity Membership - Immersa Academy
+X-WR-TIMEZONE:America/Bogota
+BEGIN:VTIMEZONE
+TZID:America/Bogota
+BEGIN:STANDARD
+DTSTART:19700101T000000
+TZOFFSETFROM:-0500
+TZOFFSETTO:-0500
+TZNAME:-05
+END:STANDARD
+END:VTIMEZONE
+BEGIN:VEVENT
+UID:clarity-clase-martes@immersa-academy
+DTSTAMP:20261022T160000Z
+DTSTART;TZID=America/Bogota:20260818T190000
+DTEND;TZID=America/Bogota:20260818T200000
+RRULE:FREQ=WEEKLY;BYDAY=TU
+SUMMARY:Clase de práctica + feedback
+DESCRIPTION:Clase de Immersa Academy. Únete aquí: https://us06web.zoom.us/j/2475816106
+LOCATION:https://us06web.zoom.us/j/2475816106
+END:VEVENT
+BEGIN:VEVENT
+UID:clarity-sesion-claridad-20261022@immersa-academy
+DTSTAMP:20261022T160000Z
+DTSTART;TZID=America/Bogota:20261022T110000
+DTEND;TZID=America/Bogota:20261022T120000
+SUMMARY:Sesión de claridad (Q&A con teacher Isa)
+DESCRIPTION:Un espacio mensual para resolver preguntas\, destrabar obstáculos y ayudarte a seguir avanzando.\nÚnete aquí: https://us06web.zoom.us/j/2475816106
+LOCATION:https://us06web.zoom.us/j/2475816106
+END:VEVENT
+END:VCALENDAR
