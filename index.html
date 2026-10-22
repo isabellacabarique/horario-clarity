@@ -269,7 +269,7 @@ function getAllOccurrences(){
     RECURRING_CLASSES.forEach(def=>{
       if(def.weekday === weekday){
         const ev = buildEvent(dayRef.getUTCFullYear(), dayRef.getUTCMonth(), dayRef.getUTCDate(), def.hour, def.minute, def.title, false);
-        if(ev.startUTC.getTime() > now - 5*60000) events.push(ev);
+        if(ev.endUTC.getTime() > now) events.push(ev);
       }
     });
   }
@@ -277,7 +277,7 @@ function getAllOccurrences(){
   SPECIAL_SESSIONS.forEach(s=>{
     const [y,m,d] = s.date.split("-").map(Number);
     const ev = buildEvent(y, m-1, d, s.hour, s.minute, s.title, true, s.color, s.note);
-    if(ev.startUTC.getTime() > now - 5*60000) events.push(ev);
+    if(ev.endUTC.getTime() > now) events.push(ev);
   });
 
   events.sort((a,b)=> a.startUTC - b.startUTC);
