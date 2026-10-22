@@ -311,6 +311,14 @@ function outlookLink(ev){
 // Para iOS usamos una data URI y navegamos directo, que sí dispara la
 // pantalla nativa de Calendario. En el resto (desktop, Android) seguimos
 // usando la descarga normal del archivo .ics.
+// Archivo .ics individual (uno por clase) publicado en la carpeta /ics.
+// En iPhone, abrir un .ics real desde Safari muestra "Agregar a Calendario".
+function icsFileUrl(ev){
+  const c = new Date(ev.startUTC.getTime() - COLOMBIA_OFFSET_H*3600000);
+  const key = c.getUTCFullYear()+pad(c.getUTCMonth()+1)+pad(c.getUTCDate())+"-"+pad(c.getUTCHours())+pad(c.getUTCMinutes());
+  return location.origin + location.pathname.replace(/[^\/]*$/, "") + "ics/" + key + ".ics";
+}
+
 function isIOS(){
   return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
@@ -414,7 +422,7 @@ function render(){
           <a href="${googleLink(ev)}" target="_blank" rel="noopener">Google Calendar</a>
           <a href="${outlookLink(ev)}" target="_blank" rel="noopener">Outlook</a>
           ${isIOS()
-            ? `<a href="${(location.origin + location.pathname.replace(/[^\/]*$/, "") + "clases.ics").replace(/^https?:/, "webcal:")}">Apple / Otro (.ics)</a>`
+            ? `<a href="${icsFileUrl(ev)}">Apple / Otro (.ics)</a>`
             : `<button type="button" data-ics="${icsId}">Apple / Otro (.ics)</button>`}
         </div>
       </div>
