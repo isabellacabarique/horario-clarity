@@ -413,7 +413,9 @@ function render(){
           <span class="add-cal-label">Agregar a tu calendario:</span>
           <a href="${googleLink(ev)}" target="_blank" rel="noopener">Google Calendar</a>
           <a href="${outlookLink(ev)}" target="_blank" rel="noopener">Outlook</a>
-          <button type="button" data-ics="${icsId}">Apple / Otro (.ics)</button>
+          ${isIOS()
+            ? `<a href="${(location.origin + location.pathname.replace(/[^\/]*$/, "") + "clases.ics").replace(/^https?:/, "webcal:")}">Apple / Otro (.ics)</a>`
+            : `<button type="button" data-ics="${icsId}">Apple / Otro (.ics)</button>`}
         </div>
       </div>
     `;
