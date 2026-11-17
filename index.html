@@ -212,12 +212,19 @@ const RECURRING_CLASSES = [
 // { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: ...", color: "#74f0d5", note: "Texto chiquito debajo del título (opcional)" }
 // "color" y "note" son opcionales.
 const SPECIAL_SESSIONS = [
+  // Clase reprogramada por vacaciones (se ve como clase normal, sin etiqueta de "sesión especial")
+  { date: "2026-12-14", hour: 19, minute: 0, title: "Clase de práctica + feedback", regular: true },
   { date: "2026-11-12", hour: 19, minute: 0, title: "Sesión de claridad (Q&A con teacher Isa)", color: "#74f0d5",
     note: "Un espacio mensual para resolver preguntas, destrabar obstáculos y ayudarte a seguir avanzando." },
   { date: "2026-10-22", hour: 11, minute: 0, title: "Sesión de claridad (Q&A con teacher Isa)", color: "#74f0d5",
     note: "Un espacio mensual para resolver preguntas, destrabar obstáculos y ayudarte a seguir avanzando." },
   // ejemplo:
   // { date: "2026-08-20", hour: 19, minute: 30, title: "Sesión especial: Q&A en vivo", color: "#74f0d5" },
+];
+
+// Vacaciones: no se muestran clases recurrentes entre estas fechas (inclusive).
+const BREAKS = [
+  { from: "2026-12-23", to: "2027-01-04" },
 ];
 
 /* ============================================================
@@ -267,6 +274,8 @@ function getAllOccurrences(){
   for(let i=0; i<daysAhead; i++){
     const dayRef = new Date(Date.UTC(startY, startM, startD + i));
     if(scheduleStartRef !== null && dayRef.getTime() < scheduleStartRef) continue;
+    const dayStr = dayRef.getUTCFullYear()+"-"+pad(dayRef.getUTCMonth()+1)+"-"+pad(dayRef.getUTCDate());
+    if(BREAKS.some(b => dayStr >= b.from && dayStr <= b.to)) continue;
     const weekday = dayRef.getUTCDay();
     RECURRING_CLASSES.forEach(def=>{
       if(def.weekday === weekday){
@@ -278,7 +287,7 @@ function getAllOccurrences(){
 
   SPECIAL_SESSIONS.forEach(s=>{
     const [y,m,d] = s.date.split("-").map(Number);
-    const ev = buildEvent(y, m-1, d, s.hour, s.minute, s.title, true, s.color, s.note);
+    const ev = buildEvent(y, m-1, d, s.hour, s.minute, s.title, !s.regular, s.color, s.note);
     if(ev.endUTC.getTime() > now) events.push(ev);
   });
 
